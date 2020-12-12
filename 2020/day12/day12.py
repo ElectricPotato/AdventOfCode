@@ -28,7 +28,7 @@ def partA(inputText):
                 yPos -= arg
             elif(facing==3):
                 xPos -= arg
-        #print(xPos,yPos,facing)
+        #print(xPos,yPos,facing,instr,arg)
     return abs(xPos) + abs(yPos)
 
 def partB(inputText):
@@ -45,15 +45,15 @@ def partB(inputText):
         elif(instr=="W"):
             waypointXPos -= arg
         elif(instr=="R"):
-            for i in range(arg//90):
+            for _ in range(arg//90):
                 waypointXPos, waypointYPos = waypointYPos, -waypointXPos
         elif(instr=="L"):
-            for i in range(arg//90):
+            for _ in range(arg//90):
                 waypointXPos, waypointYPos = -waypointYPos, waypointXPos
         elif(instr=="F"):
             shipXPos += waypointXPos * arg
             shipYPos += waypointYPos * arg
-        print(f"S({shipXPos}, {shipYPos}), WP({waypointXPos}, {waypointYPos})")
+        #print(f"S({shipXPos}, {shipYPos}), WP({waypointXPos}, {waypointYPos})")
     return abs(shipXPos) + abs(shipYPos)
 
 
