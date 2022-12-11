@@ -1,3 +1,5 @@
+these are regex find and replace patterns to help turn the puzzle input into python code
+
 Monkey .*:
 ),
 Monkey(
@@ -9,7 +11,7 @@ Starting items: (.*)
     lambda old: $1,
 
 Test: divisible by (.*)
-    lambda x: x % $1 == 0,
+    $1,
 
   If true: throw to monkey (.*)
     $1,
