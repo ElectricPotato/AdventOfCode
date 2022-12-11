@@ -1,0 +1,18 @@
+Monkey .*:
+),
+Monkey(
+
+Starting items: (.*)
+    [$1],
+
+  Operation: new = (.*)
+    lambda old: $1,
+
+Test: divisible by (.*)
+    lambda x: x % $1 == 0,
+
+  If true: throw to monkey (.*)
+    $1,
+
+  If false: throw to monkey (.*)
+    $1
