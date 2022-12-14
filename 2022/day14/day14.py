@@ -107,7 +107,7 @@ def partA(inputText):
 
 
 def partB(inputText):
-    points = []
+    points = set()
     paths=inputText.split("\n")
     maxY = 0
     for path in paths:
@@ -126,11 +126,11 @@ def partB(inputText):
             xDir, yDir = sgn(xB - xA), sgn(yB - yA)
 
             xCurr, yCurr = xA, yA
-            points += [[xCurr, yCurr]]
+            points.add((xCurr, yCurr))
 
             while(not(xCurr == xB and yCurr == yB)):
                 xCurr, yCurr = xCurr + xDir, yCurr + yDir
-                points += [[xCurr, yCurr]]
+                points.add((xCurr, yCurr))
 
     sandGrains = 0
     sandHistory = [[500, 0]] # previous position of sand grain before it stops moving
@@ -140,21 +140,21 @@ def partB(inputText):
         while(True):
             moved = False
             for xDir, yDir in [[0,1], [-1,1], [1,1]]:
-                if([xSand + xDir, ySand + yDir] not in points):
+                if((xSand + xDir, ySand + yDir) not in points):
                     moved = True
-                    sandHistory += [[xSand, ySand]]
+                    sandHistory += [(xSand, ySand)]
                     xSand, ySand = xSand + xDir, ySand + yDir
                     break
 
             if(not moved): break
             if(ySand == maxY + 1): break
         
-        points += [[xSand, ySand]]
+        points.add((xSand, ySand))
         sandGrains += 1
-        if(sandGrains%100 == 0):print(sandGrains)
+        #if(sandGrains%100 == 0):print(sandGrains)
 
         
-        if([xSand, ySand] == [500,0]):
+        if((xSand, ySand) == (500,0)):
             break
 
     #printGrid(points, xSand, ySand)
