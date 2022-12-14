@@ -34,14 +34,17 @@ def partA(inputText):
                 points += [[xCurr, yCurr]]
 
     sandGrains = 0
+    sandHistory = [[500, 0]]
     while(True):
-        xSand, ySand = 500, 0
+        xSand, ySand = sandHistory[-1]
+        sandHistory = sandHistory[:-1]
         moved = True
         while(moved):
             moved = False
             for xDir, yDir in [[0,1], [-1,1], [1,1]]:
                 if([xSand + xDir, ySand + yDir] not in points):
                     moved = True
+                    sandHistory += [[xSand, ySand]]
                     xSand, ySand = xSand + xDir, ySand + yDir
                     break
             
@@ -100,13 +103,16 @@ def partB(inputText):
                 points += [[xCurr, yCurr]]
 
     sandGrains = 0
+    sandHistory = [[500, 0]] # previous position of sand grain before it stops moving
     while(True):
-        xSand, ySand = 500, 0
+        xSand, ySand = sandHistory[-1]
+        sandHistory = sandHistory[:-1]
         while(True):
             moved = False
             for xDir, yDir in [[0,1], [-1,1], [1,1]]:
                 if([xSand + xDir, ySand + yDir] not in points):
                     moved = True
+                    sandHistory += [[xSand, ySand]]
                     xSand, ySand = xSand + xDir, ySand + yDir
                     break
 
@@ -140,7 +146,7 @@ inputText = readFile("einput.txt")
 print("Example partA", partA(inputText))
 print("Example partB", partB(inputText))
 
-inputText = readFile("input.txt")
-#print("partA", partA(inputText))
-#print("partB", partB(inputText))
 
+inputText = readFile("input.txt")
+print("partA", partA(inputText))
+print("partB", partB(inputText)) #answer 29076
