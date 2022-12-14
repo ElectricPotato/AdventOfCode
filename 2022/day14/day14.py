@@ -1,11 +1,58 @@
 '''
 
 '''
+def printGrid(points, xSand, ySand):
+    xMax = max(p[0] for p in points)
+    xMin = min(p[0] for p in points)
+
+    yMax = max(p[1] for p in points)
+    yMin = min(p[1] for p in points)
+
+    for y in range(yMin, yMax+1):
+        line = ""
+        for x in range(xMin, xMax+1):
+            if([x,y] == [xSand, ySand]):
+                line += "s"
+            elif([x,y] in points):
+                line += "#"
+            else:
+                line += "."
+        print(line)
+
 
 def sgn(x):
     if(x>0):return 1
     if(x<0):return -1
     return 0
+
+def showPuzzle(inputText):
+    points = []
+    paths=inputText.split("\n")
+    maxY = 0
+    for path in paths:
+        pathParsed = []
+        for line in path.split(" -> "):
+            x,y = line.split(",")
+            x,y = int(x), int(y)
+            pathParsed += [[x,y]]
+
+            maxY = max(maxY, y)
+
+        for pointA, pointB in zip(pathParsed, pathParsed[1:]):
+            xA, yA = pointA
+            xB, yB = pointB
+
+            xDir, yDir = sgn(xB - xA), sgn(yB - yA)
+
+            xCurr, yCurr = xA, yA
+            points += [[xCurr, yCurr]]
+
+            while(not(xCurr == xB and yCurr == yB)):
+                xCurr, yCurr = xCurr + xDir, yCurr + yDir
+                points += [[xCurr, yCurr]]
+
+    points += [[500, 0]]
+    printGrid(points, 500, 0)
 
 def partA(inputText):
     points = []
@@ -58,23 +105,6 @@ def partA(inputText):
             break
     return sandGrains
 
-def printGrid(points, xSand, ySand):
-    xMax = max(p[0] for p in points)
-    xMin = min(p[0] for p in points)
-
-    yMax = max(p[1] for p in points)
-    yMin = min(p[1] for p in points)
-
-    for y in range(yMin, yMax+1):
-        line = ""
-        for x in range(xMin, xMax+1):
-            if([x,y] == [xSand, ySand]):
-                line += "s"
-            elif([x,y] in points):
-                line += "#"
-            else:
-                line += "."
-        print(line)
 
 def partB(inputText):
     points = []
@@ -145,8 +175,10 @@ def readFile(fileName):
 inputText = readFile("einput.txt")
 print("Example partA", partA(inputText))
 print("Example partB", partB(inputText))
+#showPuzzle(inputText)
 
 
 inputText = readFile("input.txt")
 print("partA", partA(inputText))
 print("partB", partB(inputText)) #answer 29076
+#showPuzzle(inputText)
