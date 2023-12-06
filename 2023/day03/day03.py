@@ -2,13 +2,62 @@
 
 '''
 
-
 def partA(inputText):
     lines=inputText.split("\n")
-    for line in lines:
-        pass
+    height = len(lines)
+    width = len(lines[0])
+    
+    #find the coordinates of digits 1 space away from position (x,y), including diagonals 
+    def findAdjacentDigits(x, y):
+        convolutionDirections = \
+            [(dx, dy) for dx in range(-1, 2) for dy in range(-1, 2) if not (dx == 0 and dy == 0)]
+        
+        adjacentDigitCoords = []
+        for dx, dy in convolutionDirections:
+            if(0 <= x + dx < width \
+               and 0 <= y + dy < height \
+               and lines[y+dy][x+dx].isdigit()):
+                adjacentDigitCoords += [(x + dx, y + dy)]
+        return adjacentDigitCoords
+    
+    #finds adjecent digits and combines them into a number
+    def findNumber(x, y):
+        xMin = x
+        xMax = x
+        while(0 <= xMin - 1 and lines[y][xMin - 1].isdigit()):
+            xMin -= 1
 
-    return 1
+        while(xMax + 1 < width and lines[y][xMax + 1].isdigit()):
+            xMax += 1
+
+        number = int(lines[y][xMin:xMax + 1])
+        coords = [(xa, y) for xa in range(xMin, xMax + 1)]
+
+        return (number, coords)
+
+
+    total = 0
+    for y in range(height):
+        for x in range(width):
+            char = lines[y][x]
+            
+            if(char == '.' or char.isdigit()):
+                continue
+
+            foundCoords = []
+            for adjX, adjY in findAdjacentDigits(x, y):
+                if(adjX, adjY) in foundCoords:
+                    continue
+
+                number, coords = findNumber(adjX, adjY)
+                foundCoords += coords
+
+                #print(number, coords)
+
+                total += number
+
+
+    return total
 
 def partB(inputText):
     lines=inputText.split("\n")
@@ -33,5 +82,5 @@ print("Example partA", partA(inputText))
 print("Example partB", partB(inputText))
 
 inputText = readFile("input.txt")
-#print("partA", partA(inputText))
+print("partA", partA(inputText))
 #print("partB", partB(inputText))
