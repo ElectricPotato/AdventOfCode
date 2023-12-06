@@ -2,20 +2,46 @@
 
 '''
 
+def parse(inputText):
+    lines=inputText.split("\n")
+
+    parsed = []
+    for line in lines:
+        cardNStr, contents = line.split(":")
+        cardN = int(cardNStr[len("Card "):])
+        winningNumbersStr, givenNumbersStr = contents.split(" | ")
+
+        winningNumbers = list(map(int, winningNumbersStr.split()))
+        givenNumbers = list(map(int, givenNumbersStr.split()))
+        
+        parsed += [(cardN, winningNumbers, givenNumbers)]
+
+    return parsed
 
 def partA(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+    cards = parse(inputText)
 
-    return 1
+    total = 0
+    for cardN, winningNumbers, givenNumbers in cards:
+        matchingNumbers = sum([1 for winningNumber in winningNumbers if winningNumber in givenNumbers])
+
+        if(matchingNumbers > 0):
+            total += 2 ** (matchingNumbers - 1)
+
+    return total
 
 def partB(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+    cards = parse(inputText)
+    cardQuantities = [1] * len(cards)
 
-    return 1
+    total = 0
+    for i, (cardN, winningNumbers, givenNumbers) in enumerate(cards):
+        matchingNumbers = sum([1 for winningNumber in winningNumbers if winningNumber in givenNumbers])
+
+        for j in range(1, matchingNumbers + 1):
+            cardQuantities[i + j] += cardQuantities[i]
+
+    return sum(cardQuantities)
 
 
 
@@ -33,5 +59,5 @@ print("Example partA", partA(inputText))
 print("Example partB", partB(inputText))
 
 inputText = readFile("input.txt")
-#print("partA", partA(inputText))
-#print("partB", partB(inputText))
+print("partA", partA(inputText))
+print("partB", partB(inputText))
