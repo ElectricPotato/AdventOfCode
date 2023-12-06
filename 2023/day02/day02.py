@@ -2,11 +2,7 @@
 
 '''
 
-
-def partA(inputText):
-    posibleSet = {"red": 12, "green": 13, "blue": 14}
-
-    total = 0
+def parsePuzzleInput(inputText):
     lines=inputText.split("\n")
 
     parsedList = []
@@ -26,8 +22,15 @@ def partA(inputText):
 
         parsedList += [(gameN, turnsList)]
 
+    return parsedList
+
+def partA(inputText):
+    posibleSet = {"red": 12, "green": 13, "blue": 14}
+
+    parsedList = parsePuzzleInput(inputText)
     #print(parsedList)
 
+    total = 0
     for gameN, turnsList in parsedList:
         possible = True
         for turn in turnsList:
@@ -45,11 +48,25 @@ def partA(inputText):
     return total
 
 def partB(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+    posibleSet = {"red": 12, "green": 13, "blue": 14}
 
-    return 1
+    parsedList = parsePuzzleInput(inputText)
+
+    total = 0
+    for gameN, turnsList in parsedList:
+        minimumSet = {colour: 0 for colour in posibleSet.keys()}
+
+        for turn in turnsList:
+            for colour, quantity in turn.items():
+                minimumSet[colour] = max(minimumSet[colour], quantity)
+
+        power = 1
+        for colour, quantity in minimumSet.items():
+            power *= quantity
+
+        total += power
+
+    return total
 
 
 
@@ -68,4 +85,4 @@ print("Example partB", partB(inputText))
 
 inputText = readFile("input.txt")
 print("partA", partA(inputText))
-#print("partB", partB(inputText))
+print("partB", partB(inputText))
