@@ -2,7 +2,7 @@
 
 '''
 
-def partA(inputText):
+def findParts(inputText):
     lines=inputText.split("\n")
     height = len(lines)
     width = len(lines[0])
@@ -35,8 +35,7 @@ def partA(inputText):
 
         return (number, coords)
 
-
-    total = 0
+    parts = []
     for y in range(height):
         for x in range(width):
             char = lines[y][x]
@@ -45,6 +44,7 @@ def partA(inputText):
                 continue
 
             foundCoords = []
+            numbers = []
             for adjX, adjY in findAdjacentDigits(x, y):
                 if(adjX, adjY) in foundCoords:
                     continue
@@ -52,19 +52,22 @@ def partA(inputText):
                 number, coords = findNumber(adjX, adjY)
                 foundCoords += coords
 
-                #print(number, coords)
+                numbers += [number]
+            parts += [(char, numbers)]
 
-                total += number
+    return parts
 
-
-    return total
+def partA(inputText):
+    parts = findParts(inputText)
+    return sum([sum(part[1]) for part in parts])
 
 def partB(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
-
-    return 1
+    parts = findParts(inputText)
+    return sum(
+        partNumbers[0] * partNumbers[1]
+        for partChar, partNumbers in parts
+        if partChar == "*" and len(partNumbers) == 2
+        )
 
 
 
@@ -83,4 +86,4 @@ print("Example partB", partB(inputText))
 
 inputText = readFile("input.txt")
 print("partA", partA(inputText))
-#print("partB", partB(inputText))
+print("partB", partB(inputText))
