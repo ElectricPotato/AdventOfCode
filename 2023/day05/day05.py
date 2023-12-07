@@ -1,14 +1,44 @@
 '''
 
-'''
+seed, soil, fertilizer, water, light, temperature, location
 
+'''
+def parse(inputText):
+    seedsStr, *maps = inputText.split("\n\n")
+    seeds = list(map(int, seedsStr[len("seeds: "):].split()))
+
+    parsedMaps = []
+    for currentMap in maps:
+        title, *lines = currentMap.split("\n")
+
+        conversionRanges = []
+        for line in lines:
+            rangeBStart, rangeAStart, rangeLength = map(int, line.split())
+            #conversionRange = (range A Start, range A End, amount to add to get from range A to range B)
+            conversionRange = (rangeAStart, rangeAStart + rangeLength - 1, rangeBStart - rangeAStart)
+
+            conversionRanges += [conversionRange]
+
+        parsedMaps += [conversionRanges]
+
+    return (seeds, parsedMaps)
 
 def partA(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+    seeds, maps = parse(inputText)
+    
+    locations = []
+    for seed in seeds:
+        trace = seed
 
-    return 1
+        for currentMap in maps:
+            for rangeAStart, rangeAEnd, increment in currentMap:
+                if(rangeAStart <= trace <= rangeAEnd):
+                    trace += increment
+                    break
+
+        locations += [trace]
+
+    return min(locations)
 
 def partB(inputText):
     lines=inputText.split("\n")
@@ -33,5 +63,5 @@ print("Example partA", partA(inputText))
 print("Example partB", partB(inputText))
 
 inputText = readFile("input.txt")
-#print("partA", partA(inputText))
+print("partA", partA(inputText))
 #print("partB", partB(inputText))
