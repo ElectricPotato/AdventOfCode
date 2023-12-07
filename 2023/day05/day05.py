@@ -3,6 +3,9 @@
 seed, soil, fertilizer, water, light, temperature, location
 
 '''
+
+#note all ranges in this program are inclusive on both sides - (1,3) means 1, 2, 3
+
 def parse(inputText):
     seedsStr, *maps = inputText.split("\n\n")
     seeds = list(map(int, seedsStr[len("seeds: "):].split()))
@@ -40,12 +43,77 @@ def partA(inputText):
 
     return min(locations)
 
-def partB(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
 
-    return 1
+def rangeOverlap(rangeA_start, rangeA_end, rangeB_start, rangeB_end):
+    start = max(rangeA_start, rangeB_start)
+    end = min(rangeA_end, rangeB_end)
+    if(end < start):
+        return None
+    else:
+        return (start, end)
+    
+#subtract range B from range A, A - B
+def rangeSubtract(rangeA_start, rangeA_end, rangeB_start, rangeB_end):
+    # A is completely inside B
+    #     AAAA 
+    # BBBBBBBBBBB
+    if(rangeB_start <= rangeA_start and rangeA_end <= rangeB_end):
+        return None
+    
+    # B is completely inside A
+    # AAAAAAAAAAA
+    #     BBBB
+    # AAAA    AAA <- result
+    if(rangeA_start < rangeB_start and rangeB_end < rangeA_end):
+        return [(rangeA_start, rangeB_start - 1), (rangeB_end + 1, rangeA_end)]
+    
+    # B is on left of A
+    # AAAAAAAA
+    #     BBBBB
+    # AAAA     <- result
+    if(rangeA_start < rangeB_start <= rangeA_end and rangeA_end < rangeB_end):
+        return [(rangeA_start, rangeB_start - 1)]
+
+    # B is on right of A
+    #  AAAAAAA
+    # BBBBB
+    #      AAA <- result
+    if(rangeB_start < rangeA_start and rangeA_start <= rangeB_end < rangeA_end):
+        return [(rangeB_end + 1, rangeA_end)]
+
+    #not overlapping
+    #      AA
+    # BBBB
+    #      AA <- result
+    return [(rangeA_start, rangeA_end)]
+
+def subtractRanges(rangeA, rangesB):
+    ranges = [rangeA]
+    nextRanges = []
+    for rangeB_start, rangeB_end in rangesB:
+        for rangeA_start, rangeA_end in ranges:
+            newRanges = rangeSubtract()
+    rangeA_start, rangeA_end = rangeA
+
+def partB(inputText):
+    seeds, maps = parse(inputText)
+    seedRanges = [(seeds[i], seeds[i] + seeds[i+1] - 1) for i in range(0, len(seeds), 2)]
+    for seedRange in seedRanges:
+
+        traceRanges = [seedRange]
+        nextRanges = []
+        for currentMap in maps:
+            for traceRangeStart, traceRangeEnd in traceRanges:
+                for rangeAStart, rangeAEnd, increment in currentMap:
+                    overlap = rangeOverlap(rangeAStart, rangeAEnd, traceRangeStart, traceRangeEnd)
+                    if(overlap == None):
+                        continue
+                    overlapStart, overlapEnd = overlap
+                    nextRanges += [(overlapStart + increment, overlapEnd + increment)]
+            traceRanges = list(nextRanges)
+            nextRanges = []
+            print(traceRanges)
+        print("---")
 
 
 
