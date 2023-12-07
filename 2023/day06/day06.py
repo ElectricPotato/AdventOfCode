@@ -46,7 +46,30 @@ def partB(inputText):
     buttonTime1 = (time - (time ** 2 - 4 * dist) ** 0.5) / 2
     buttonTime2 = (time + (time ** 2 - 4 * dist) ** 0.5) / 2
 
+    #note: incorrect answer when in the situation when the rounded
+    # buttonTime gives a distance equal to the target distance.
+    # this is fixed in partA_alternate()
     return math.floor(buttonTime2) - math.ceil(buttonTime1) + 1
+
+
+def partA_alternate(inputText):
+    races = parse(inputText)
+
+    product = 1
+    for time, dist in races:
+        buttonTime1 = (time - (time ** 2 - 4 * dist) ** 0.5) / 2
+        buttonTime2 = (time + (time ** 2 - 4 * dist) ** 0.5) / 2
+
+        buttonTime1 = math.ceil(buttonTime1)
+        buttonTime2 = math.floor(buttonTime2)
+
+        total = buttonTime2 - buttonTime1 + 1
+        if((time - buttonTime1) * buttonTime1 == dist): total -= 1
+        if((time - buttonTime2) * buttonTime2 == dist): total -= 1
+
+        product *= total
+
+    return product
 
 
 
