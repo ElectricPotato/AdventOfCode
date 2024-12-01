@@ -2,20 +2,38 @@
 
 '''
 
+def parseA(inputText):
+    lines = inputText.split("\n")[:-1]
+    parsed = [map(int, line.split()) for line in lines]
+    unzipped = [list(t) for t in zip(*parsed)]
+
+    return unzipped
 
 def partA(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+    leftList, rightList = map(sorted, parseA(inputText))
+    distances = [abs(l - r) for l, r in zip(leftList, rightList)]
 
-    return 1
+    return sum(distances)
+
+def frequencyTable(l):
+    freqDict = {}
+    for i in l:
+        if i in freqDict:
+            freqDict[i] += 1
+        else:
+            freqDict[i] = 1
+
+    return freqDict
+
+def dictLookup(d, i):
+    if i not in d: return 0
+    return d[i]
 
 def partB(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+    leftList, rightList = map(sorted, parseA(inputText))
+    freqDict = frequencyTable(rightList)
 
-    return 1
+    return sum([i * dictLookup(freqDict, i) for i in leftList])
 
 
 
@@ -34,5 +52,5 @@ print("Example partA", partA(inputText))
 print("Example partB", partB(inputText))
 
 inputText = readFile("input.txt")
-#print("partA", partA(inputText))
-#print("partB", partB(inputText))
+print("partA", partA(inputText))
+print("partB", partB(inputText))
