@@ -32,7 +32,6 @@ def partB(inputText):
     for line in lines:
         matches = pattern.finditer(line)
         for match in matches:
-            print(match.group())
             if match.group() == "do()":
                 enabled = True
             elif match.group() == "don't()":
