@@ -25,6 +25,9 @@ class Board:
            (0 <= x < self.height):
             return self.contents[y][x]
         return "."
+    
+    def getWord(self, y, x, path):
+        return ''.join(self.getChar(y + dx, x + dy) for dx, dy in path)
 
 def partA(inputText):
     lines=inputText.split("\n")[:-1]
@@ -56,8 +59,8 @@ def partB(inputText):
     #for each starting poisition
     for y in range(len(lines)):
         for x in range(len(lines[0])):
-            if (board.getChar(y + 1, x + 1) + board.getChar(y, x) + board.getChar(y - 1, x - 1)) in ['MAS', 'SAM'] and \
-               (board.getChar(y + 1, x - 1) + board.getChar(y, x) + board.getChar(y - 1, x + 1)) in ['MAS', 'SAM']:
+            if board.getWord(y, x, [(+1, +1), (0, 0), (-1, -1)]) in ['MAS', 'SAM'] and \
+               board.getWord(y, x, [(+1, -1), (0, 0), (-1, +1)]) in ['MAS', 'SAM']:
                 total += 1
 
     return total
@@ -75,8 +78,8 @@ def readFile(fileName):
     return inputText
 
 inputText = readFile("einput.txt")
-print("Example partA", partA(inputText))
-print("Example partB", partB(inputText))
+print("Example partA", partA(inputText)) #18
+print("Example partB", partB(inputText)) #9
 
 inputText = readFile("input.txt")
 print("partA", partA(inputText))
