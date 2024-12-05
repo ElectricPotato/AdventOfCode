@@ -18,8 +18,21 @@ def isOrdered(pageNoList, orderingRules):
     return True
 
 def fixOrdering(pageNoList, orderingRules): #TODO
+    relevantRules = [[pageA, pageB] for pageA, pageB in orderingRules if pageA in pageNoList and pageB in pageNoList]
 
-    return pageNoList
+    newPageNoList = []
+    while len(relevantRules) > 0:
+        pagesFrom, pagesTo = map(set, zip(*relevantRules)) #make a list of unique pages that appear in the from/to sections of all rules
+        #get the page that no other page points to (it only appears in pagesFrom, but not pagesTo)
+        nextPage = list(pagesFrom - pagesTo)[0]
+        assert len(list(pagesFrom - pagesTo)) == 1
+        
+        #remove rules with startPage in the 'from' field
+        relevantRules = [[pageFrom, pageTo] for pageFrom, pageTo in relevantRules if pageFrom != nextPage]
+
+        newPageNoList += [nextPage]
+    
+    return newPageNoList
 
 def partA(inputText):
     orderingRules, pageNoLists = parse(inputText)
