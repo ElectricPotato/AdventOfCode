@@ -103,10 +103,3 @@ print("Example partA", resultA)
 assert resultA == 41
 
 print("partA", partA(inputText))
-
-
-resultB = partB(inputTextExample)
-print("Example partB", resultB)
-#assert resultB == 6
-
-print("partB", partB(inputText))
