@@ -82,29 +82,34 @@ class Guard:
                 return False #loop not found
         
 
-#brute force solution by placing an obstacle on each square one by one
-#can be made more efficient by only trying squares in the original path of the guard
+#brute force solution by placing an obstacle on each square of the original path of the guard
+#could be made a little bit more efficient by not starting from the beggining each time and
+#using part of the previously calculated original path in the 'visited' squares list
+#currently takes 8.379s to run (13.974s with printing) on Dell XPS 13 9360
 def partB(inputText):
     lines=list(map(list, inputText.split("\n")[:-1]))
     board = Board(lines)
     guard = Guard(board)
 
+    guard.simulateToEnd()
+    #get list of unique visited positions with rotation stripped out
+    positionsToCheck = list({(x, y) for x, y, r in guard.visited})
+
     possiblePositions = []
-    for y in range(board.width):
-        for x in range(board.height):
-            if board.getChar(x, y) != SQ_EMPTY: #only try empty squares
-                continue
+    for x, y in positionsToCheck:
+        if board.getChar(x, y) != SQ_EMPTY: #only try empty squares
+            continue
 
-            guard.reset() #reset position/rotation and visited squares
-            #add an obstacle
-            guard.board.contents[y][x] = SQ_OBSTACLE
+        guard.reset() #reset position/rotation and visited squares
+        #add an obstacle
+        guard.board.contents[y][x] = SQ_OBSTACLE
 
-            if guard.simulateToEnd():
-                print(f"found position {(x, y)}")
-                possiblePositions += [(x, y)]
-            
-            #clear obstacle
-            guard.board.contents[y][x] = SQ_EMPTY
+        if guard.simulateToEnd():
+            #print(f"found position {(x, y)}") #DEBUG
+            possiblePositions += [(x, y)]
+        
+        #clear obstacle
+        guard.board.contents[y][x] = SQ_EMPTY
             
     
     return len(possiblePositions)
