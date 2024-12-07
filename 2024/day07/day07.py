@@ -44,7 +44,7 @@ def partB(inputText):
 
     total = 0
     for caseI, (result, args) in enumerate(cases):
-        print(caseI)
+        print(f"{caseI} / {len(cases)}")
 
         found = False
         for n in range(3**(len(args) - 1)):
@@ -57,6 +57,9 @@ def partB(inputText):
                     accumulator *= arg
                 elif op == 2:
                     accumulator = int(str(accumulator) + str(arg))
+                
+                if accumulator > result:
+                    break
                     
             if accumulator == result:
                 found = True
@@ -80,9 +83,9 @@ def readFile(fileName):
     return inputText
 
 inputText = readFile("einput.txt")
-print("Example partA", partA(inputText))
-print("Example partB", partB(inputText))
+print("Example partA", partA(inputText)) #3749
+print("Example partB", partB(inputText)) #11387
 
 inputText = readFile("input.txt")
-#print("partA", partA(inputText))
-print("partB", partB(inputText))
+#print("partA", partA(inputText)) #1298103531759
+print("partB", partB(inputText)) #140575048428831
