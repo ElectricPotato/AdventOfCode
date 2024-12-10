@@ -83,6 +83,7 @@ def checksumDiskChunks(diskChunks):
 
     return checksum
 
+#TODO: possible optimisation: make a dict of space positions, indexed by size
 def partB(inputText, debug = False):
     diskChunks, maxFileID = parse(inputText)
 
@@ -147,8 +148,6 @@ def partB(inputText, debug = False):
 
             if spacePointer > len(diskChunks) - 1:
                 break
-
-            if spacePointer >= filePointer: break
 
     if debug:
         print("finished")
