@@ -4,19 +4,45 @@
 
 BLOCK_EMPTY = -1
 
-def partA(inputText):
+def parse(inputText):
     nums=list(map(int, inputText.split("\n")[0]))
     if len(nums) % 2 == 1:
         nums += [0] #add a number of spaces to make everything pairs of (file size + space size)
     
-    disk = []
+    maxFileID = len(nums) // 2 - 1
+    diskChunks = []
     for fileID, (fileSize, spaceSize) in enumerate(zip(nums[::2], nums[1::2])):
-        disk += [fileID] * fileSize
-        disk += [BLOCK_EMPTY] * spaceSize
-
-    #print(''.join(str(x) if x >= 0 else '.' for x in disk))
-    print(f"length of disk: {len(disk)}")
+        if fileSize > 0:
+            diskChunks += [(fileID, fileSize)]
     
+        if spaceSize > 0:
+            diskChunks += [(BLOCK_EMPTY, spaceSize)]
+
+    return diskChunks, maxFileID
+
+def printDisk(disk):
+    print(''.join(str(x) if x >= 0 else '.' for x in disk))
+
+def checksumDisk(disk):
+    #checksum
+    checksum = 0
+    for blockIdx, fileID in enumerate(disk):
+        if fileID == -1:
+            break
+        checksum += blockIdx * fileID
+
+    return checksum
+
+def partA(inputText, debug = False):
+    diskChunks, _ = parse(inputText)
+
+    disk = []
+    for fileID,fileSize in diskChunks:
+        disk += [fileID] * fileSize
+
+    if debug:
+        printDisk(disk)
+        print(f"length of disk: {len(disk)}")
 
     startPointer = 0
     endPointer = len(disk) - 1
@@ -35,65 +61,59 @@ def partA(inputText):
         startPointer += 1
         endPointer -= 1
 
-        #print(''.join(str(x) if x >= 0 else '.' for x in disk))
+        if debug: printDisk(disk)
 
-    #checksum
+    return checksumDisk(disk)
+
+
+def printDiskChunks(diskChunks):
+    print(''.join((str(fileID) if fileID >= 0 else '.') * fileSize for fileID, fileSize in diskChunks))
+
+def checksumDiskChunks(diskChunks):
     checksum = 0
-    for blockIdx, fileID in enumerate(disk):
-        if fileID == -1:
-            break
-        checksum += blockIdx * fileID
+    blockIdx = 0
+    for fileID, fileSize in diskChunks:
+        if fileID == BLOCK_EMPTY:
+            blockIdx += fileSize
+            continue
+
+        for _ in range(fileSize): #Note: could be optimized with triangular number formula
+            checksum += fileID * blockIdx
+            blockIdx += 1
 
     return checksum
 
-#TODO: add print function
-#TODO: tidy code, put stuff into functions
+def partB(inputText, debug = False):
+    diskChunks, maxFileID = parse(inputText)
 
-def printChunks(diskChunks):
-    print(''.join((str(fileID) if fileID >= 0 else '.') * fileSize for fileID, fileSize in diskChunks))
+    firstSpace = 0
 
-def partB(inputText):
-    nums=list(map(int, inputText.split("\n")[0]))
-    if len(nums) % 2 == 1:
-        nums += [0] #add a number of spaces to make everything pairs of (file size + space size)
-    
-    maxFileID = len(nums) // 2 - 1
-    diskChunks = []
-    for fileID, (fileSize, spaceSize) in enumerate(zip(nums[::2], nums[1::2])):
-        if fileSize > 0:
-            diskChunks += [(fileID, fileSize)]
-    
-        if spaceSize > 0:
-            diskChunks += [(BLOCK_EMPTY, spaceSize)]
-
-    print("initial")
-    #printChunks(diskChunks)
+    if debug:
+        print("initial")
+        printDiskChunks(diskChunks)
 
     filePointer = len(diskChunks) - 1
-    #get first file
-    while diskChunks[filePointer][0] == BLOCK_EMPTY:
-        filePointer -= 1
-        if filePointer < 0:
-            break
-
     for relocateFileID in range(maxFileID, -1, -1):
         print(f"{relocateFileID} / {maxFileID}")
-        for i, (cId, cSize) in enumerate(diskChunks):
-            if cId == relocateFileID:
-                fileSize = cSize
-                filePointer = i
-                break
-        #printChunks(diskChunks)
+
+        #get the next file to relocate
+        while diskChunks[filePointer][0] != relocateFileID:
+            filePointer -= 1
+        _, fileSize = diskChunks[filePointer]
+
+        if debug:printDiskChunks(diskChunks)
         #for each file, find a suitable space
 
         #get first space
-        spacePointer = 0
+        spacePointer = firstSpace
         while diskChunks[spacePointer][0] != BLOCK_EMPTY:
             spacePointer += 1
             if spacePointer > len(diskChunks) - 1:
                 break
         if spacePointer > len(diskChunks) - 1:
             break
+
+        firstSpace = spacePointer #optimisation: position of first space only moves forward
 
         while True:
             #check each space for relocation
@@ -113,7 +133,7 @@ def partB(inputText):
                 else: #no space left over
                     diskChunks[spacePointer] = (relocateFileID, fileSize)
                 diskChunks[filePointer] = (BLOCK_EMPTY, fileSize)
-                #printChunks(diskChunks)
+                #printDiskChunks(diskChunks)
                 break
 
             #get next space
@@ -130,22 +150,11 @@ def partB(inputText):
 
             if spacePointer >= filePointer: break
 
-    print("finished")
-    #printChunks(diskChunks)
-    #checksum
-    checksum = 0
-    blockIdx = 0
-    for fileID, fileSize in diskChunks:
-        if fileID == BLOCK_EMPTY:
-            blockIdx += fileSize
-            continue
+    if debug:
+        print("finished")
+        printDiskChunks(diskChunks)
 
-        for _ in range(fileSize): #Note: could be optimized with triangular number formula
-            checksum += fileID * blockIdx
-            blockIdx += 1
-
-
-    return checksum
+    return checksumDiskChunks(diskChunks)
 
 
 
@@ -160,7 +169,7 @@ def readFile(fileName):
     return inputText
 
 inputText = readFile("einput.txt")
-#print("Example partA", partA(inputText)) #1928
+print("Example partA", partA(inputText)) #1928
 print("Example partB", partB(inputText)) #2858
 
 inputText = readFile("input.txt")
