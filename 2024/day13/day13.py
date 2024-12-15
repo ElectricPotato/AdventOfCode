@@ -16,7 +16,6 @@ def findCost(ax, ay, bx, by, px, py) -> Optional[int]:
     aPrice, bPrice = 3, 1
 
     #A button is more expensive, start with 0 A presses
-    found = False
     for an in range(px // ax):
         if (px - an * ax) % bx != 0:
             continue
