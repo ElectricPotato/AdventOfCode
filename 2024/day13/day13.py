@@ -1,7 +1,24 @@
 '''
-Note:
-ax * an + bx * bn = px
-ay * an + by * bn = py
+Solve simultaneous equations:
+(1) ax * an + bx * bn = px
+(2) ay * an + by * bn = py
+
+Rearage eq 1:
+ bn = (px - an * ax) / bx
+Substiutute into 2:
+ ay * an + by * ((px - an * ax) / bx) = py
+Expand:
+ ay * an + by * px / bx - by * an * ax / bx = py ok
+Move an terms to one side:
+ ay * an - by * an * ax / bx = py - by * px / bx
+Collect an terms:
+ an * (ay - by * ax / bx) = py - by * px / bx
+Rearange for an:
+ an = (py - by * px / bx) / (ay - by * ax / bx)
+
+Remove division - this stops a floating point error I ran into,
+                  by keeping the numerator and denominator as integers
+ an = (bx * py - by * px) / (bx * ay - by * ax)
 
 Matrix form:
   ax bx  *  an  =  px
@@ -12,7 +29,7 @@ import parse
 from typing import Optional
 
 #solution can be bruteforced, the number of presses of a button is 100 or less
-def findCost(ax, ay, bx, by, px, py) -> Optional[int]:
+def findCostA(ax, ay, bx, by, px, py) -> Optional[int]:
     aPrice, bPrice = 3, 1
 
     #A button is more expensive, start with 0 A presses
@@ -27,28 +44,48 @@ def findCost(ax, ay, bx, by, px, py) -> Optional[int]:
     return None
 
 def partA(inputText):
-    cases=inputText.split("\n\n")[:-1]
+    cases=inputText[:-1].split("\n\n")
 
     total = 0
     for case in cases:
         caseFormat = "Button A: X{:d}, Y{:d}\nButton B: X{:d}, Y{:d}\nPrize: X={:d}, Y={:d}"
         ax, ay, bx, by, px, py = parse.parse(caseFormat, case).fixed
 
-        cost = findCost(ax, ay, bx, by, px, py)
+        cost = findCostA(ax, ay, bx, by, px, py)
 
         if cost is not None:
             total += cost
     
     return total
         
-        
+#part B cant be bruteforced, use formula instead
+# (should always give the same answer as findCostA)
+def findCostB(ax, ay, bx, by, px, py) -> Optional[int]:
+    aPrice, bPrice = 3, 1
+
+    if (bx * py - by * px) % (bx * ay - by * ax) != 0:
+        return None
+    
+    an = (bx * py - by * px) // (bx * ay - by * ax)
+    bn = (px - an * ax) // bx
+    return aPrice * an + bPrice * bn
 
 def partB(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+    cases=inputText[:-1].split("\n\n")
 
-    return 1
+    total = 0
+    for case in cases:
+        caseFormat = "Button A: X{:d}, Y{:d}\nButton B: X{:d}, Y{:d}\nPrize: X={:d}, Y={:d}"
+        ax, ay, bx, by, px, py = parse.parse(caseFormat, case).fixed
+        px += 10000000000000
+        py += 10000000000000
+
+        cost = findCostB(ax, ay, bx, by, px, py)
+
+        if cost is not None:
+            total += cost
+    
+    return total
 
 
 
@@ -63,9 +100,9 @@ def readFile(fileName):
     return inputText
 
 inputText = readFile("einput.txt")
-print("Example partA", partA(inputText))
-print("Example partB", partB(inputText))
+print("Example partA", partA(inputText)) #480
+print("Example partB", partB(inputText)) #2nd and 4th case are possible
 
 inputText = readFile("input.txt")
-print("partA", partA(inputText))
-#print("partB", partB(inputText))
+print("partA", partA(inputText)) #40369
+print("partB", partB(inputText)) #72587986598368
