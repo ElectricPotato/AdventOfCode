@@ -119,6 +119,17 @@ class Robots:
 #   and 50 + 103 * N, where N is an integer
 #  (possible optimisation could have been to simulate 103 steps in one go instead of one at a time)
 #  (another possible optimisation would have been to keep track of the max border score and only display when a new maximum has been found)
+
+# first, I looked at the patterns in cases when the nBorderingSquares score was >200
+#   there was a horizontal pattern visible in steps seperated by multiples of 101 (this proved irelevant later)
+#   there was a vertical pattern visible in steps seperated by multiples of 103
+#     e.g. I noted down 4376, 4685, 5097, 5200, 5652 which I though looked interesting,
+#          the time step differences were 309, 412, 103, 452,
+#          which were multiples of 103 (except the last one, which was disregarded)
+#          with an offset of 50 (4376 % 103 = 50)
+# then I started printing out just the steps that can be written in the form 50 + 103 * N
+# manually looking through a couple, I found the tree
+
 def partB(inputText, example = False):
     robots = Robots(inputText, example)
 
