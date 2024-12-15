@@ -50,10 +50,87 @@ def partA(inputText, example = False):
 
     return quadrants[0] * quadrants[1] * quadrants[2] * quadrants[3] 
 
-def partB(inputText):
-    lines=inputText.split("\n")
-    for line in lines:
-        pass
+dirs = [
+    ( 0, -1), #up
+    (+1,  0), #right
+    ( 0, +1), #down
+    (-1,  0), #left
+]
+class Robots:
+    def __init__(self, inputText, example = False):
+        self.robots = parseRobots(inputText)
+
+        if example:
+            self.width, self.height = 11, 7
+        else:
+            self.width, self.height = 101, 103
+
+        #unzip position/velocity
+        self.robotsPos = []
+        self.robotsVel = []
+        for (px, py), (vx, vy) in self.robots:
+            self.robotsPos+= [(px, py)]
+            self.robotsVel += [(vx, vy)]
+    
+    #simulate 1 step
+    def simulate(self):
+        for i in range(len(self.robotsPos)):
+            px, py = self.robotsPos[i]
+            vx, vy = self.robotsVel[i]
+            px = (px + vx) % self.width
+            py = (py + vy) % self.height
+            self.robotsPos[i] = (px, py)
+
+    def show(self):
+        printStr = ""
+        for y in range(self.height):
+            for x in range(self.width):
+                count = self.robotsPos.count((x, y))
+
+                if count == 0:
+                    countStr = "."
+                elif count > 9:
+                    countStr = "X"
+                else:
+                    countStr = str(count)
+
+                printStr += countStr
+            printStr += "\n"
+
+        print(printStr[:-1])
+
+    def hasOverlap(self):
+        return len(self.robotsPos) != len(set(self.robotsPos))
+    
+    def nBorderingSquares(self):
+        count = 0
+        for x, y in self.robotsPos:
+            for dx, dy in dirs:
+                if (x + dx, y + dy) in self.robotsPos:
+                    count += 1
+
+        return count
+
+
+#strategies:
+# simulate until no overlap - assume the tree picture was drawn with no overlapping bots
+# look for large contigious areas:
+#  I noticed that nBorderingSquares returned a score of over 200 for generations 97 + 101 * N,
+#   and 50 + 103 * N, where N is an integer
+#  (possible optimisation could have been to simulate 103 steps in one go instead of one at a time)
+#  (another possible optimisation would have been to keep track of the max border score and only display when a new maximum has been found)
+def partB(inputText, example = False):
+    robots = Robots(inputText, example)
+
+    #robots.show()
+    #print()
+    for i in range(1, 10000):
+        robots.simulate()
+
+        if i % 103 == 50 and not robots.hasOverlap():
+            count = robots.nBorderingSquares()
+            print(i, count)
+            robots.show()
 
     return 1
 
@@ -70,9 +147,9 @@ def readFile(fileName):
     return inputText
 
 inputText = readFile("einput.txt")
-print("Example partA", partA(inputText, example=True))
+#print("Example partA", partA(inputText, example=True))
 #print("Example partB", partB(inputText, example=True))
 
 inputText = readFile("input.txt")
-print("partA", partA(inputText))
-#print("partB", partB(inputText))
+#print("partA", partA(inputText))
+print("partB", partB(inputText))
