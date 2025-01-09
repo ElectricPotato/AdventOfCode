@@ -6,7 +6,12 @@ SQ_OUT_OF_BOUNDS = "x"
 SQ_ROBOT_START = "@"
 SQ_EMPTY = "."
 SQ_WALL = "#"
-SQ_BOX = "O"
+
+SQ_BOX_OLD = "O"
+
+SQ_BOX_L = "["
+SQ_BOX_R = "]"
+SQ_BOX = SQ_BOX_L + SQ_BOX_R
 
 dirs = {
     "^": ( 0, -1), #up
@@ -17,6 +22,11 @@ dirs = {
 
 class Board:
     def __init__(self, lines) -> None:
+        lines = lines.replace(SQ_EMPTY, SQ_EMPTY * 2) \
+                     .replace(SQ_WALL, SQ_WALL * 2) \
+                     .replace(SQ_BOX_OLD, SQ_BOX) \
+                     .replace(SQ_ROBOT_START, SQ_ROBOT_START + SQ_EMPTY)
+        
         self.contents = list(map(list, lines.split("\n")))
 
         self.width = len(self.contents[0])
@@ -81,12 +91,13 @@ class Robot:
         for instr in self.instructions:
             self.move(instr)
 
-
-def partA(inputText):
+def partB(inputText):
     robot = Robot(inputText)
     robot.runAllMoves()
     
     return robot.board.sumBoxes()
+
+
 
 import os
 
@@ -99,10 +110,10 @@ def readFile(fileName):
     return inputText
 
 inputText = readFile("einput.txt")
-print("Example partA", partA(inputText))
+print("Example partB", partB(inputText))
 
 inputText = readFile("einput2.txt")
-print("Example partA", partA(inputText))
+print("Example partB", partB(inputText))
 
 inputText = readFile("input.txt")
-print("partA", partA(inputText))
+print("partB", partB(inputText))
