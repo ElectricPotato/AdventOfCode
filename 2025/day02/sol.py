@@ -13,12 +13,6 @@ repeating digits
 11 - 99, multiples of 11, 1 to 9
 1010 - 9999, multiples of 101, 10 to 99
 100100 - 999999, multiples of 1001, 100 to 999
-
-current_range_multiples = 10 ** (n_digits) + 1
-    #for i in range(,  + 1):
-10 ** (n_digits - 1)
-10 ** n_digits - 1
-
 '''
 
 #sum of numbers in the range a to b, inclusive
@@ -28,47 +22,47 @@ def tri_sum(a, b):
 def n_digits(n):
     return math.floor(math.log10(n)) + 1
 
-def partA(parsed):
+def one_rangeA(start, end):
     total = 0
-    for start, end in parsed:
-        #get the number of digits to start with
-        start_ndigits = n_digits(start)
+    
+    #get the number of digits to start with
+    start_ndigits = n_digits(start)
 
-        #round up to nearest even number
-        if start_ndigits % 2 != 0: start_ndigits += 1
-        start_half_ndigits = start_ndigits // 2
+    #round up to nearest even number
+    if start_ndigits % 2 != 0: start_ndigits += 1
+    start_half_ndigits = start_ndigits // 2
 
-        while True:
-            current_range_multiples = 10 ** start_half_ndigits + 1
-            current_range_multiplier_start = 10 ** (start_half_ndigits - 1)
-            current_range_multiplier_end = 10 ** start_half_ndigits - 1
+    while True:
+        current_range_multiples = 10 ** start_half_ndigits + 1
+        current_range_multiplier_start = 10 ** (start_half_ndigits - 1)
+        current_range_multiplier_end = 10 ** start_half_ndigits - 1
 
-            multiplier_start = max(math.ceil(start / current_range_multiples), current_range_multiplier_start)
+        multiplier_start = max(math.ceil(start / current_range_multiples), current_range_multiplier_start)
 
-            multiplier_end = min(math.floor(end / current_range_multiples), current_range_multiplier_end)
-            
+        multiplier_end = min(math.floor(end / current_range_multiples), current_range_multiplier_end)
 
-            #print(f"{start}-{end}, {current_range_multiples} * {current_range_multiplier_start}-{current_range_multiplier_end}, {multiplier_start}-{multiplier_end}")
+        #if the range doesnt include any valid numbers, then stop
+        if multiplier_end < multiplier_start:
+            break
 
-            #if the range doesnt include any valid numbers, then stop
-            if multiplier_end < multiplier_start:
+        #check if the range include at least one valid number, otherwise stop
+        if multiplier_start == multiplier_end:
+            if not (start <= (current_range_multiples * multiplier_start) <= end):
                 break
 
-            #check if the range include at least one valid number, otherwise stop
-            if multiplier_start == multiplier_end:
-                if not (start <= (current_range_multiples * multiplier_start) <= end):
-                    break
+        total += current_range_multiples * tri_sum(multiplier_start, multiplier_end)
 
-            total += current_range_multiples * tri_sum(multiplier_start, multiplier_end)
-
-            #check if to go into the next range
-            if end > current_range_multiples * current_range_multiplier_end:
-                start_half_ndigits += 1
-            else:
-                break
+        #check if to go into the next range
+        if end > current_range_multiples * current_range_multiplier_end:
+            start_half_ndigits += 1
+        else:
+            break
 
         
     return total
+
+def partA(parsed):
+    return sum(one_rangeA(start, end) for start, end in parsed)
 
 '''
 repeating digits
@@ -157,7 +151,7 @@ def sum_pattern(pattern_length, ndigits, start, end):
     overlap_start, overlap_end = overlap
     return multiple * tri_sum(overlap_start, overlap_end)
 
-def one_range(start, end):
+def one_rangeB(start, end):
     total = 0
     for ndigits in range(n_digits(start), n_digits(end) + 1):
         pattern_lengths_covered = {}
@@ -186,7 +180,7 @@ def one_range(start, end):
     return total
 
 def partB(parsed):
-    return sum(one_range(start, end) for start, end in parsed)
+    return sum(one_rangeB(start, end) for start, end in parsed)
 
 def main():
     parsedA_example = parseA("einput.txt")
