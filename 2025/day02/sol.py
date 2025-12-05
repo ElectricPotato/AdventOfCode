@@ -22,42 +22,48 @@ def tri_sum(a, b):
 def n_digits(n):
     return math.floor(math.log10(n)) + 1
 
+# boolean union of two ranges (a1, b1) and (a2, b2)
+def range_overlap(a1, b1, a2, b2):
+    assert a1 <= b1 and a2 <= b2
+
+    if a1 <= a2 <= b1 or a1 <= b2 <= b1:
+        return (max(a1, a2), min(b1, b2))
+    else:
+        return None
+
+def sum_patternA(ndigits, start, end):
+    current_range_multiples = 10 ** (ndigits // 2) + 1
+    current_range_multiplier_start = 10 ** ((ndigits // 2) - 1)
+    current_range_multiplier_end = 10 ** (ndigits // 2) - 1
+
+    defined_range_start = math.ceil(start / current_range_multiples)
+    defined_range_end = math.floor(end / current_range_multiples)
+
+    if defined_range_start > defined_range_end:
+        return 0
+    
+    overlap = range_overlap(current_range_multiplier_start, current_range_multiplier_end, defined_range_start, defined_range_end)
+    if overlap == None:
+        return 0
+
+    overlap_start, overlap_end = overlap
+    return current_range_multiples * tri_sum(overlap_start, overlap_end)
+
 def one_rangeA(start, end):
     total = 0
     
-    #get the number of digits to start with
-    start_ndigits = n_digits(start)
-
-    #round up to nearest even number
-    if start_ndigits % 2 != 0: start_ndigits += 1
-    start_half_ndigits = start_ndigits // 2
+    #get the number of digits to start with, and round up to nearest even number
+    ndigits = n_digits(start)
+    if ndigits % 2 != 0: ndigits += 1
 
     while True:
-        current_range_multiples = 10 ** start_half_ndigits + 1
-        current_range_multiplier_start = 10 ** (start_half_ndigits - 1)
-        current_range_multiplier_end = 10 ** start_half_ndigits - 1
-
-        multiplier_start = max(math.ceil(start / current_range_multiples), current_range_multiplier_start)
-
-        multiplier_end = min(math.floor(end / current_range_multiples), current_range_multiplier_end)
-
-        #if the range doesnt include any valid numbers, then stop
-        if multiplier_end < multiplier_start:
-            break
-
-        #check if the range include at least one valid number, otherwise stop
-        if multiplier_start == multiplier_end:
-            if not (start <= (current_range_multiples * multiplier_start) <= end):
-                break
-
-        total += current_range_multiples * tri_sum(multiplier_start, multiplier_end)
+        total += sum_patternA(ndigits, start, end)
 
         #check if to go into the next range
-        if end > current_range_multiples * current_range_multiplier_end:
-            start_half_ndigits += 1
-        else:
+        if end <= 10 ** ndigits - 1:
             break
 
+        ndigits += 2
         
     return total
 
@@ -125,15 +131,6 @@ def pattern_features(pattern_length, pattern_repeats):
     range_end   = 10 ** pattern_length - 1
 
     return (multiple, range_start, range_end)
-
-# boolean union of two ranges (a1, b1) and (a2, b2)
-def range_overlap(a1, b1, a2, b2):
-    assert a1 <= b1 and a2 <= b2
-
-    if a1 <= a2 <= b1 or a1 <= b2 <= b1:
-        return (max(a1, a2), min(b1, b2))
-    else:
-        return None
 
 def sum_pattern(pattern_length, ndigits, start, end):
     multiple, range_start, range_end = pattern_features(pattern_length, ndigits // pattern_length)
