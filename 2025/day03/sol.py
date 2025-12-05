@@ -44,11 +44,19 @@ def partB_serial_one_line(line):
     buffer = [0] * total_digits
     while len(line) > 0:
         for digit_idx in range(total_digits):
-            if digit_idx == total_digits - 1 or buffer[digit_idx] < buffer[digit_idx + 1]:
-                buffer.pop(digit_idx)
-                break
+            if digit_idx != total_digits - 1:
+                if buffer[digit_idx] < buffer[digit_idx + 1]:
+                    buffer.pop(digit_idx)
+                    buffer.append(line.pop(0))
+                    break
+            else:
+                if buffer[digit_idx] < line[0]:
+                    buffer.pop(digit_idx)
+                    buffer.append(line.pop(0))
+                else:
+                    line.pop(0)
 
-        buffer.append(line.pop(0))
+        
 
     result = 0
     for digit_idx in range(total_digits):
@@ -91,8 +99,8 @@ def main():
     print(result)
     assert result == 169019504359949
 
-    compare_partB_serial(parsedA)
     compare_partB_serial(parsedA_example)
+    compare_partB_serial(parsedA)
 
 
 if __name__ == '__main__':
