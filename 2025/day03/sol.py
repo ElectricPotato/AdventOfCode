@@ -43,20 +43,17 @@ def partB_serial_one_line(line):
 
     buffer = [0] * total_digits
     while len(line) > 0:
+        line_digit = line.pop(0)
         for digit_idx in range(total_digits):
             if digit_idx != total_digits - 1:
-                if buffer[digit_idx] < buffer[digit_idx + 1]:
-                    buffer.pop(digit_idx)
-                    buffer.append(line.pop(0))
-                    break
+                next_buffer_value = buffer[digit_idx + 1]
             else:
-                if buffer[digit_idx] < line[0]:
-                    buffer.pop(digit_idx)
-                    buffer.append(line.pop(0))
-                else:
-                    line.pop(0)
+                next_buffer_value = line_digit
 
-        
+            if buffer[digit_idx] < next_buffer_value:
+                buffer.pop(digit_idx)
+                buffer.append(line_digit)
+                break
 
     result = 0
     for digit_idx in range(total_digits):
