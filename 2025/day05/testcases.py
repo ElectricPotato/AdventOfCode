@@ -57,6 +57,7 @@ def minimise_testcase():
     print("minimused testcase: ", testcase)
 
 #compare()
-minimise_testcase()
+#minimise_testcase()
 assert partB_naive([[82, 108], [53, 143]]) == partB([[82, 108], [53, 143]]), "there is a discrepency"
 assert range_overlap_check([82, 108], [53, 143])
+print("ok")

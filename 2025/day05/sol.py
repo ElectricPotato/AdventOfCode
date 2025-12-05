@@ -35,6 +35,7 @@ def range_overlap(a, b):
 # true if ranges (a1, b1) and (a2, b2) overlap or are next to each other
 def range_overlap_check(a, b):
     return a[0] <= b[0] <= a[1] or a[0] <= b[1] <= a[1] \
+        or b[0] <= a[0] <= b[1] or b[0] <= a[1] <= b[1] \
         or abs(a[0] - b[1]) == 1 or abs(a[1] - b[0]) == 1
     
 def range_size(a):

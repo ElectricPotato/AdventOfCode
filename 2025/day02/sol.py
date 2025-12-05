@@ -22,11 +22,12 @@ def tri_sum(a, b):
 def n_digits(n):
     return math.floor(math.log10(n)) + 1
 
-# boolean union of two ranges (a1, b1) and (a2, b2)
+# boolean intersecton of two ranges (a1, b1) and (a2, b2)
 def range_overlap(a1, b1, a2, b2):
     assert a1 <= b1 and a2 <= b2
 
-    if a1 <= a2 <= b1 or a1 <= b2 <= b1:
+    if a1 <= a2 <= b1 or a1 <= b2 <= b1 \
+       or a2 <= a1 <= b2 or a2 <= b1 <= b2:
         return (max(a1, a2), min(b1, b2))
     else:
         return None
