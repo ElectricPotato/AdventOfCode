@@ -119,15 +119,6 @@ repeating digits
 
 '''
 
-def patterns(ndigits):
-    result = []
-    pattern_length = 1
-    while ndigits / pattern_length >= 2:
-        if ndigits % pattern_length == 0:
-            result.append((pattern_length, ndigits // pattern_length))
-        pattern_length += 1
-    return result #[length of a single part of the pattern, number of times it repeats]
-
 def factors(n):
     return [n//i for i in range(1, n + 1) if n % i == 0]
 
@@ -150,40 +141,32 @@ def range_overlap(a1, b1, a2, b2):
     else:
         return None
 
-def sum_pattern(pattern_length, pattern_repeats, start, end):
-    total = 0
-    multiple, range_start, range_end = pattern_features(pattern_length, pattern_repeats)
+def sum_pattern(pattern_length, ndigits, start, end):
+    multiple, range_start, range_end = pattern_features(pattern_length, ndigits // pattern_length)
 
     defined_range_start = math.ceil(start/multiple)
     defined_range_end = math.floor(end/multiple)
 
-    
     if defined_range_start > defined_range_end:
-        pass
-        #print(f" {multiple} * {range_start}-{range_end}, xx, xx")
-    else:
-        overlap = range_overlap(range_start, range_end, defined_range_start, defined_range_end)
-        if overlap == None:
-            pass
-            #print(f" {multiple} * {range_start}-{range_end}, {defined_range_start}-{defined_range_end}, xx")
-        else:
-            overlap_start, overlap_end = overlap
-            #print(f" {multiple} * {range_start}-{range_end}, {defined_range_start}-{defined_range_end}, {overlap_start}-{overlap_end}")
-
-            total = multiple * tri_sum(overlap_start, overlap_end)
-
-    return total
+        return 0
+    
+    overlap = range_overlap(range_start, range_end, defined_range_start, defined_range_end)
+    if overlap == None:
+        return 0
+    
+    overlap_start, overlap_end = overlap
+    return multiple * tri_sum(overlap_start, overlap_end)
 
 def one_range(start, end):
     total = 0
-    for n in range(n_digits(start), n_digits(end) + 1):
+    for ndigits in range(n_digits(start), n_digits(end) + 1):
         pattern_lengths_covered = {}
 
         #go from longest pattern to shortest
 
         #this can be done better using linear algebra (vector divided by matrix?)
         #matrix of factors of each length * vector with the "need" values for each length = vector of all 1s
-        for pattern_length, pattern_repeats in patterns(n)[::-1]:
+        for pattern_length in factors(ndigits)[1:]:
             if pattern_length not in pattern_lengths_covered:
                 need = 1
             else:
@@ -198,7 +181,7 @@ def one_range(start, end):
                 else:
                     pattern_lengths_covered[factor] += need
 
-            total += need * sum_pattern(pattern_length, pattern_repeats, start, end)
+            total += need * sum_pattern(pattern_length, ndigits, start, end)
 
     return total
 
