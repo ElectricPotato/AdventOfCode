@@ -1,3 +1,5 @@
+import copy
+
 def parseA(filename):
     with open(filename) as file:
         lines = list(map(list,file.read().splitlines()))
@@ -28,8 +30,31 @@ def partA(grid):
         #print()
     return count
 
+def print_grid(grid):
+    for line in grid:
+        print(''.join(line))
+
 def partB(grid):
-    return None
+    current_grid = copy.deepcopy(grid)
+    count = 0
+
+    while True:
+        next_grid = copy.deepcopy(current_grid)
+        current_count = 0
+        for y in range(len(grid)):
+            for x in range(len(grid[0])):
+                if current_grid[y][x] == "@" and neighbours(current_grid, x, y) < 4:
+                    next_grid[y][x] = "."
+                    current_count += 1
+                    count += 1
+
+        current_grid = copy.deepcopy(next_grid)
+
+        if current_count == 0:
+            break
+
+    print_grid(current_grid)
+    return count
 
 def main():
     parsedA_example = parseA("einput.txt")
@@ -44,11 +69,11 @@ def main():
 
     result = partB(parsedA_example)
     print(result)
-    assert result == None
+    assert result == 43
     
     result = partB(parsedA)
     print(result)
-    #assert result == 
+    assert result == 33832678380
 
     
 
