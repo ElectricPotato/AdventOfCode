@@ -9,17 +9,16 @@ def parseA(filename):
 
     return result
 
+def partA_one_line(line):
+    first_digit = max(line[:-1])
+    line = line[line.index(first_digit) + 1:]
+
+    second_digit = max(line)
+
+    return first_digit * 10 + second_digit
+
 def partA(parsed):
-    total = 0
-    for line in parsed:
-        first_digit = max(line[:-1])
-        line = line[line.index(first_digit) + 1:]
-
-        second_digit = max(line)
-
-        total += first_digit * 10 + second_digit
-            
-    return total
+    return sum(partA_one_line(line) for line in parsed)
 
 def partB(parsed):
 
