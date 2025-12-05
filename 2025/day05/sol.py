@@ -73,6 +73,7 @@ def main():
     parsedA = parseA("input.txt")
     result = partA(parsedA)
     print(result)
+    assert result == 520
 
     result = partB(parsedA_example[0])
     print(result)

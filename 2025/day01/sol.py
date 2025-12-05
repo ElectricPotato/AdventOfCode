@@ -41,6 +41,7 @@ def main():
     parsedA = parseA("input.txt")
     result = partA(parsedA)
     print(result)
+    assert result == 989
 
     result = partB(parsedA_example)
     print(result)
@@ -48,6 +49,7 @@ def main():
     
     result = partB(parsedA)
     print(result)
+    assert result == 5941
 
     
 
