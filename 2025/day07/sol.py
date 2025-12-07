@@ -1,6 +1,3 @@
-
-#transpose a list of lists
-
 def parseA(filename):
     with open(filename) as file:
         lines = file.readlines()
