@@ -6,12 +6,10 @@ def parseA(filename):
 
     return [list(map(int, line.split(","))) for line in lines]
 
-import math
 
-def dist(a, b):
-    return math.sqrt(
-        (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2
-    )
+#get the square of the distance between two points in 3D space
+def sq_dist(a, b):
+    return (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2
 
 def product(ns):
     p = 1
@@ -30,7 +28,7 @@ def partA(boxes, n_connections):
     pairs = []
     for i in range(len(boxes)):
         for j in range(i + 1, len(boxes)):
-            pairs.append((i, j, dist(boxes[i], boxes[j])))
+            pairs.append((i, j, sq_dist(boxes[i], boxes[j])))
 
     pairs.sort(key = lambda x: x[2])
 
@@ -57,7 +55,7 @@ def partB(boxes):
     pairs = []
     for i in range(len(boxes)):
         for j in range(i + 1, len(boxes)):
-            pairs.append((i, j, dist(boxes[i], boxes[j])))
+            pairs.append((i, j, sq_dist(boxes[i], boxes[j])))
 
     pairs.sort(key = lambda x: x[2])
 
@@ -96,7 +94,6 @@ def main():
     print(result)
     assert result == 78894156
 
-    
 
 
 if __name__ == '__main__':
