@@ -4,11 +4,22 @@ def parseA(filename):
 
     lines = [line.replace("\n","") for line in lines]
 
-    return lines
+    devices = dict()
 
-def partA(parsed):
+    for line in lines:
+        device, *to = line.split()
+        devices[device[:-1]] = to
 
-    return None
+    return devices
+
+def partA_recurse(devices, device_from):
+    if device_from == "out":
+        return 1
+    
+    return sum(partA_recurse(devices, device_to) for device_to in devices[device_from])
+
+def partA(devices):
+    return partA_recurse(devices, "you")
 
 def partB(parsed):
 
@@ -18,16 +29,16 @@ def main():
     parsedA_example = parseA("einput.txt")
     result = partA(parsedA_example)
     print(result)
-    assert result == None
+    assert result == 5
 
     parsedA = parseA("input.txt")
     result = partA(parsedA)
     print(result)
-    #assert result == 
+    assert result == 477
 
     result = partB(parsedA_example)
     print(result)
-    assert result == None
+    assert result == 2
     
     result = partB(parsedA)
     print(result)
