@@ -7,7 +7,7 @@ def parseA(filename):
     return lines
 
 def area(a, b):
-    return abs(a[0] - b[0] + 1) * abs(a[1] - b[1] + 1)
+    return (abs(a[0] - b[0]) + 1) * (abs(a[1] - b[1]) + 1)
 
 def partA(squares):
     rectangles = []
@@ -285,9 +285,7 @@ def main():
     
     result = partB(parsedA)
     print(result)
-    #assert result == 
-
-    
+    assert result == 1560475800
 
 
 if __name__ == '__main__':
