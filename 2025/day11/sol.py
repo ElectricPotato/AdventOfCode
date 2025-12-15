@@ -12,18 +12,30 @@ def parseA(filename):
 
     return devices
 
-def partA_recurse(devices, device_from):
-    if device_from == "out":
+def partA_recurse(devices, device_from, destination):
+    if device_from == destination:
         return 1
+    elif device_from == "out":
+        return 0
     
-    return sum(partA_recurse(devices, device_to) for device_to in devices[device_from])
+    return sum(partA_recurse(devices, device_to, destination) for device_to in devices[device_from])
 
 def partA(devices):
-    return partA_recurse(devices, "you")
+    return partA_recurse(devices, "you", "out")
 
-def partB(parsed):
+def partB(devices):
+    #find number of paths svr to fft
+    #find number of paths fft to dac
+    #find number of paths dac to out
 
-    return None
+    a = partA_recurse(devices, "svr", "fft")
+    print(a)
+    b = partA_recurse(devices, "fft", "dac")
+    print(b)
+    c = partA_recurse(devices, "dac", "out")
+    print(c)
+
+    return a * b * c
 
 def main():
     parsedA_example = parseA("einput.txt")
@@ -36,10 +48,13 @@ def main():
     print(result)
     assert result == 477
 
-    result = partB(parsedA_example)
+    print("part b example")
+    parsedB_example = parseA("einputB.txt")
+    result = partB(parsedB_example)
     print(result)
     assert result == 2
     
+    print("part b")
     result = partB(parsedA)
     print(result)
     #assert result == 
