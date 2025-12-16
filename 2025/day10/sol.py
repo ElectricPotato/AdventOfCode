@@ -54,8 +54,10 @@ def partA_one(machine):
 def partA(parsed):
     return sum(partA_one(machine) for machine in parsed)
 
+from myfraction import MyFraction
+
 def new_matrix(n_rows, n_cols):
-    return [[0] * n_cols for _ in range(n_rows)]
+    return [[MyFraction(0, 1)] * n_cols for _ in range(n_rows)]
 
 def row_leading_zeros(row):
     count = 0
@@ -69,14 +71,14 @@ def row_leading_zeros(row):
 #row_a -= row_b * n
 def sub_row(m, row_a, row_b, n):
     for i in range(len(m[0])):
-        m[row_a][i] -= m[row_b][i] * n
+        m[row_a][i] = m[row_a][i] - m[row_b][i] * n
 
 #row_i *= n
 def divide_row(m, row_i, n):
     for i in range(len(m[0])):
         #assert m[row_i][i] % n == 0, "a non-integer division has happened"
         #if(m[row_i][i] % n != 0): print(f"non integer {m[row_i][i]}/{n}")
-        m[row_i][i] /= n
+        m[row_i][i] = m[row_i][i] / n
 
 #turn into Row Echelon Form
 def matrix_ref(m: List[List[int]]):
@@ -156,10 +158,10 @@ def partA_one(buttons, joltages):
     #populate matrix
     for button_idx, button in enumerate(buttons):
         for joltage_idx in button:
-            button_matrix[joltage_idx][button_idx] = 1
+            button_matrix[joltage_idx][button_idx] = MyFraction(1, 1)
 
     for joltage_idx, joltage in enumerate(joltages):
-        button_matrix[joltage_idx][len(buttons)] = joltage
+        button_matrix[joltage_idx][len(buttons)] = MyFraction(joltage, 1)
 
     #turn into Row Echelon Form
     matrix_ref(button_matrix)
@@ -172,10 +174,12 @@ def partA_one(buttons, joltages):
     #print()
     #show_matrix(button_matrix)
     free_var = len(button_matrix[0]) - 1 - len(button_matrix)
-    print("free variables", )
-    if free_var <= 0:
+    if free_var > 0:
+        print("free variables", free_var)
         show_matrix(button_matrix)
-    print()
+        print()
+
+        #TODO:construct a system of equations where all elements in the solution have to be non-negative integers
 
     return 0
 
